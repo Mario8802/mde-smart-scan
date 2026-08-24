@@ -2,4 +2,4 @@ Django==5.2.5
 Pillow==12.3.0
 pytesseract==0.3.13
 whitenoise==6.9.0
-gunicorn==23.0.0
+gunicorn==26.1.0
