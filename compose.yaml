@@ -1,0 +1,15 @@
+services:
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      DJANGO_SECRET_KEY: local-docker-demo-key-change-me
+      DJANGO_DEBUG: "true"
+      DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1
+      DATABASE_PATH: /app/data/db.sqlite3
+    volumes:
+      - smartscan_data:/app/data
+
+volumes:
+  smartscan_data:

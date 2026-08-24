@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Benachrichtigung · {{ record.tracking_number }}{% endblock %}
+{% block head %}<meta name="robots" content="noindex">{% endblock %}
+{% block content %}
+<section class="label-page">
+  <div class="print-controls">
+    <a class="back-link" href="{% url 'scan-review' record.pk %}">← Zur Sendung</a>
+    <button class="button button-dark" type="button" onclick="window.print()">Drucken</button>
+  </div>
+
+  <article class="print-label">
+    <header><span class="label-brand">MDE SMART SCAN</span><strong>BENACHRICHTIGUNG</strong></header>
+    <div class="label-body">
+      <p>Wir haben Sie leider nicht angetroffen.</p>
+      <div class="label-field"><span>Sendungsart</span><strong>{{ record.get_item_type_display }}</strong></div>
+      <div class="label-field"><span>Empfänger:in</span><strong>{{ record.recipient_name }}</strong></div>
+      <div class="label-field"><span>Sendungsnummer</span><code>{{ record.tracking_number }}</code></div>
+      <div class="barcode" aria-label="Visualisierte Sendungsnummer">
+        {% for character in record.tracking_number %}<i class="bar bar-{{ forloop.counter|divisibleby:3|yesno:'wide,narrow' }}"></i>{% endfor %}
+      </div>
+      <small>Prototyp – Abholort und Frist würden über die autorisierte Backend-Schnittstelle ergänzt.</small>
+    </div>
+    <footer><span>{{ record.created_at|date:"d.m.Y H:i" }}</span><span>Ref. #{{ record.pk|stringformat:"05d" }}</span></footer>
+  </article>
+
+  <div class="success-panel"><span>✓</span><div><strong>Workflow abgeschlossen</strong><p>Der Vorgang wurde revisionsfähig protokolliert. Das Originalbild wurde nicht gespeichert.</p></div></div>
+</section>
+{% endblock %}

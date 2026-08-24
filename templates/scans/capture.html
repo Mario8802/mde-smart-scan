@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Sendung scannen · MDE Smart Scan{% endblock %}
+{% block content %}
+<section class="narrow-page">
+  <div class="page-heading">
+    <a class="back-link" href="{% url 'dashboard' %}">← Übersicht</a>
+    <p class="eyebrow">SCHRITT 1 VON 3</p>
+    <h1>Sendung erfassen</h1>
+    <p>Dokument flach halten, vollständig ausleuchten und Barcode gut sichtbar platzieren.</p>
+  </div>
+
+  <form class="capture-card" method="post" enctype="multipart/form-data" data-scan-form>
+    {% csrf_token %}
+    {% if form.non_field_errors %}<div class="form-errors">{{ form.non_field_errors }}</div>{% endif %}
+    <label class="camera-drop" for="{{ form.image.id_for_label }}">
+      <span class="camera-icon">⌾</span>
+      <strong>Foto aufnehmen oder auswählen</strong>
+      <small>JPEG, PNG oder WebP · maximal 8 MB</small>
+      {{ form.image }}
+      <img data-preview alt="Vorschau des ausgewählten Dokuments" hidden>
+    </label>
+    {% if form.image.errors %}<div class="field-error">{{ form.image.errors }}</div>{% endif %}
+
+    <div class="privacy-note"><span>✓</span><p><strong>Datenschutz-Hinweis</strong><br>Das Bild wird nur im Arbeitsspeicher verarbeitet und nicht dauerhaft gespeichert.</p></div>
+
+    <details class="advanced-input">
+      <summary>OCR-Text manuell einfügen</summary>
+      <label for="{{ form.ocr_text.id_for_label }}">Erkannter Text</label>
+      {{ form.ocr_text }}
+    </details>
+
+    <button class="button button-primary button-full" type="submit">Daten erkennen <span>→</span></button>
+    <div class="or"><span>oder</span></div>
+    <button class="button button-secondary button-full" type="submit" name="demo_mode" value="on">Sichere Demo mit Beispieldaten</button>
+
+    <div class="processing" data-processing hidden aria-live="polite">
+      <span class="spinner"></span><strong>OCR verarbeitet das Dokument …</strong><small>Bildanalyse und Feldzuordnung</small>
+    </div>
+  </form>
+</section>
+{% endblock %}

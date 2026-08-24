@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Daten prüfen · MDE Smart Scan{% endblock %}
+{% block content %}
+<section class="narrow-page review-page">
+  <div class="page-heading">
+    <a class="back-link" href="{% url 'scan-capture' %}">← Neuer Scan</a>
+    <p class="eyebrow">SCHRITT 2 VON 3</p>
+    <h1>Daten prüfen</h1>
+    <p>OCR-Vorschlag kontrollieren. Erst deine Bestätigung gibt die Daten für den nächsten Schritt frei.</p>
+  </div>
+
+  <div class="confidence-card">
+    <div class="confidence-ring"><strong>{{ record.confidence_percent }}%</strong><span>OCR</span></div>
+    <div><strong>Erkennungsqualität</strong><p>{% if record.confidence >= 0.8 %}Hohe Übereinstimmung – bitte trotzdem prüfen.{% else %}Einige Felder benötigen besondere Aufmerksamkeit.{% endif %}</p></div>
+    <span class="source-chip">{{ record.get_source_display }}</span>
+  </div>
+
+  <form class="review-form panel" method="post">
+    {% csrf_token %}
+    <div class="form-grid">
+      {% for field in form %}
+      <div class="field {% if field.name == 'recipient_name' or field.name == 'street' %}field-wide{% endif %}">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.errors %}<div class="field-error">{{ field.errors }}</div>{% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    <details class="raw-ocr"><summary>OCR-Rohtext und Audit-Kontext</summary><pre>{{ record.raw_text|default:"Nicht gespeichert (Privacy-Modus)." }}</pre></details>
+    <button class="button button-primary button-full" type="submit">Daten bestätigen <span>✓</span></button>
+  </form>
+
+  {% if record.status != 'REVIEW' %}
+  <form action="{% url 'prepare-label' record.pk %}" method="post" class="next-action">
+    {% csrf_token %}
+    <div><span class="done-icon">✓</span><p><strong>Daten bestätigt</strong><br><small>{{ record.confirmed_at|date:"d.m.Y · H:i" }}</small></p></div>
+    <button class="button button-dark" type="submit">Benachrichtigung vorbereiten →</button>
+  </form>
+  {% endif %}
+
+  <section class="audit-trail">
+    <h2>Nachvollziehbarer Ablauf</h2>
+    {% for event in record.events.all %}
+      <div><span></span><p><strong>{{ event.action }}</strong><small>{{ event.created_at|date:"d.m.Y H:i:s" }} · {{ event.actor_label }}</small></p></div>
+    {% endfor %}
+  </section>
+</section>
+{% endblock %}

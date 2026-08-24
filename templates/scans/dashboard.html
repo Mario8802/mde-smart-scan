@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Übersicht · MDE Smart Scan{% endblock %}
+{% block content %}
+<section class="hero">
+  <div>
+    <p class="eyebrow">SCHNELLER ZUSTELLEN · WENIGER TIPPEN</p>
+    <h1>Ein Foto. Geprüfte Daten. Fertige Benachrichtigung.</h1>
+    <p>MDE Smart Scan liest RSa-, RSb- und Einschreiben-Daten aus einem Foto und bereitet den nächsten Zustellschritt vor.</p>
+    <div class="hero-actions">
+      <a class="button button-primary" href="{% url 'scan-capture' %}">Neue Sendung scannen</a>
+      <form action="{% url 'scan-capture' %}" method="post">
+        {% csrf_token %}<input type="hidden" name="demo_mode" value="on">
+        <button class="button button-secondary" type="submit">30-Sekunden-Demo</button>
+      </form>
+    </div>
+  </div>
+  <div class="workflow-card" aria-label="Workflow">
+    <div><span>01</span><strong>Erfassen</strong><small>Kamera oder Barcode</small></div>
+    <div><span>02</span><strong>Prüfen</strong><small>Human-in-the-loop</small></div>
+    <div><span>03</span><strong>Drucken</strong><small>Benachrichtigung</small></div>
+  </div>
+</section>
+
+<section class="metric-grid" aria-label="Kennzahlen">
+  <article class="metric"><span>Heute erfasst</span><strong>{{ today_count }}</strong><small>Sendungen</small></article>
+  <article class="metric"><span>Prüfung offen</span><strong>{{ review_count }}</strong><small>Human review</small></article>
+  <article class="metric"><span>Labels erstellt</span><strong>{{ printed_count }}</strong><small>druckbereit</small></article>
+  <article class="metric metric-highlight"><span>Modellrechnung*</span><strong>{{ impact.hours_saved_per_year }} h</strong><small>potenziell / Jahr</small></article>
+</section>
+
+<section class="panel impact-panel">
+  <div>
+    <p class="eyebrow">MESSBARER NUTZEN</p>
+    <h2>Mehr Zeit für die Zustellung</h2>
+    <p>Die Beispielrechnung nimmt 42 Sekunden manuelle Eingabe und 12 Sekunden Smart-Scan bei 24 Sendungen an 220 Arbeitstagen an.</p>
+    <small>*Illustrative Annahmen, keine Messwerte der Österreichischen Post. Im Pilotprojekt zu validieren.</small>
+  </div>
+  <div class="impact-number"><strong>{{ impact.fte_days_saved_per_year }}</strong><span>Arbeitstage / Jahr</span></div>
+</section>
+
+<section class="panel">
+  <div class="section-heading">
+    <div><p class="eyebrow">LETZTE VORGÄNGE</p><h2>Scan-Verlauf</h2></div>
+    <a href="{% url 'scan-capture' %}">+ Neu erfassen</a>
+  </div>
+  {% if recent %}
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Typ</th><th>Sendung</th><th>Empfänger:in</th><th>Status</th><th></th></tr></thead>
+      <tbody>
+      {% for record in recent %}
+        <tr>
+          <td><span class="type-chip">{{ record.get_item_type_display }}</span></td>
+          <td><code>{{ record.tracking_number }}</code></td>
+          <td>{{ record.recipient_name|default:"–" }}<small>{{ record.postal_code }} {{ record.city }}</small></td>
+          <td><span class="status status-{{ record.status|lower }}">{{ record.get_status_display }}</span></td>
+          <td><a class="row-link" href="{% url 'scan-review' record.pk %}" aria-label="Sendung öffnen">→</a></td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state"><span>▦</span><h3>Noch keine Scans</h3><p>Starte die Demo – ohne echte personenbezogene Daten.</p></div>
+  {% endif %}
+</section>
+
+<section class="trust-strip">
+  <div><strong>Privacy by design</strong><span>Originalbilder werden nicht gespeichert</span></div>
+  <div><strong>Human in the loop</strong><span>Keine Aktion ohne Sichtprüfung</span></div>
+  <div><strong>Integration-ready</strong><span>Saubere Service- und API-Grenzen</span></div>
+</section>
+{% endblock %}

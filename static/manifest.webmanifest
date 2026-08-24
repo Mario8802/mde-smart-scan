@@ -1,0 +1,9 @@
+{
+  "name": "MDE Smart Scan",
+  "short_name": "Smart Scan",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f4f4f0",
+  "theme_color": "#ffcc00",
+  "icons": []
+}
