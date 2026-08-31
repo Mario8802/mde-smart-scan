@@ -52,7 +52,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 ASGI_APPLICATION = "config.asgi.application"
-
+#TODO postrgres
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
