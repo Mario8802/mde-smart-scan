@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Privacy-first OCR workflow prototype for registered postal items"
 requires-python = ">=3.12"
 dependencies = [
-  "Django>=5.2,<5.3",
+  "Django>=5.2,<6.2",
   "Pillow>=11,<13",
   "pytesseract>=0.3.13,<0.4",
   "whitenoise>=6.9,<7",
